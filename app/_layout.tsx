@@ -3,7 +3,7 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
-import { Stack } from "expo-router";
+import { Stack, usePathname } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 import "../global.css";
@@ -11,7 +11,9 @@ import "../global.css";
 import { SessionProvider, useSession } from "@/auth/ctx";
 import { SplashScreenController } from "@/auth/splash";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import useAnalytics from "@/services/analytics";
 import { FunnelProvider } from "@/store/funnel";
+import { useEffect } from "react";
 import {
   initialWindowMetrics,
   SafeAreaProvider,
@@ -30,6 +32,7 @@ export default function RootLayout() {
         <FunnelProvider>
           <SafeAreaProvider initialMetrics={initialWindowMetrics}>
             <RootNavigator />
+            <ScreenTracker />
             <StatusBar style="auto" />
           </SafeAreaProvider>
         </FunnelProvider>
@@ -37,6 +40,15 @@ export default function RootLayout() {
     </ThemeProvider>
   );
 }
+
+const ScreenTracker = () => {
+  const pathname = usePathname();
+  const analytics = useAnalytics();
+  useEffect(() => {
+    analytics.screen(pathname);
+  }, [pathname]);
+  return null;
+};
 
 function RootNavigator() {
   const { session } = useSession();
