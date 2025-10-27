@@ -31,6 +31,8 @@ export default function FunnelHighlights() {
       ) : (
         <FlatList
           data={items}
+          pagingEnabled
+          horizontal
           keyExtractor={(it) => it.title}
           renderItem={({ item }) => (
             <Card className="mb-3">
