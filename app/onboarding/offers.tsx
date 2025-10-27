@@ -1,3 +1,4 @@
+import useAnalytics from "@/services/analytics";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Pressable, Text, View } from "react-native";
@@ -14,10 +15,16 @@ export default function FunnelOffers() {
   const setSelectedOffer = useFunnelStore((s) => s.setSelectedOffer);
   const remoteConfig = useFunnelStore((s) => s.remoteConfig);
   const [offers, setOffers] = useState<Offer[]>([]);
+  const analytics = useAnalytics();
 
   useEffect(() => {
     getOffers().then(setOffers);
   }, []);
+
+  const onSelectOffer = (offerId: string) => {
+    setSelectedOffer(offerId);
+    analytics.track("offer_selected", { offerId });
+  };
 
   return (
     <SafeAreaView className="flex-1">
@@ -28,7 +35,7 @@ export default function FunnelOffers() {
         {offers.map((o) => {
           const selected = o.id === selectedOfferId;
           return (
-            <Pressable key={o.id} onPress={() => setSelectedOffer(o.id)}>
+            <Pressable key={o.id} onPress={() => onSelectOffer(o.id)}>
               <Card
                 className={`mb-3 ${selected ? "border-2 border-blue-500" : ""}`}
               >

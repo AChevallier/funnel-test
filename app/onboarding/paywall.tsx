@@ -1,3 +1,4 @@
+import useAnalytics from "@/services/analytics";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Text, View } from "react-native";
@@ -12,7 +13,7 @@ export default function FunnelPaywall() {
   const remoteConfig = useFunnelStore((s) => s.remoteConfig);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | undefined>();
-
+  const analytics = useAnalytics();
   useEffect(() => {
     if (remoteConfig?.isUserSubscribed) {
       router.replace("/onboarding/success");
@@ -28,6 +29,7 @@ export default function FunnelPaywall() {
         shouldFail: remoteConfig?.forcePurchaseFail,
         trial: remoteConfig?.enableTrial,
       });
+      analytics.track("purchase_success", { offerId: selectedOfferId });
       router.replace("/onboarding/success");
     } catch (e) {
       setError((e as Error).message);
