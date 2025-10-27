@@ -1,3 +1,4 @@
+import { Checkbox } from "@/components/ui/checkbox";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { Text, View } from "react-native";
@@ -13,7 +14,7 @@ export default function FunnelAuth() {
   const setEmail = useFunnelStore((s) => s.setEmail);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | undefined>();
-
+  const [checked, setChecked] = useState(false);
   const onContinue = async () => {
     setSubmitting(true);
     setError(undefined);
@@ -43,6 +44,15 @@ export default function FunnelAuth() {
           placeholder="Email (optionnel)"
           keyboardType="email-address"
           autoCapitalize="none"
+        />
+
+        <Checkbox
+          label="I agree to the terms"
+          onCheckedChange={(v: boolean) => {
+            console.log("checked:", v);
+            setChecked(v === true ? true : false);
+          }}
+          checked={checked}
         />
         {error ? <Text className="text-red-500">{error}</Text> : null}
         <Button title="Continuer" onPress={onContinue} loading={submitting} />
